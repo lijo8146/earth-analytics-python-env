@@ -1,27 +1,30 @@
-name: earth-analytics-python
+name: earth-analytics-python-lj
+
 channels:
   - conda-forge
-  - defaults
+  - nodefaults          # never fall back to Anaconda defaults (mixing channels breaks GDAL/PROJ)
 
 dependencies:
   - python=3.11
   - pip
-  
+  - git                 # needed for the earthpy GitHub install on Windows
+
   # Core scientific python
   - numpy
   - pandas
   - scipy
   - dask
 
-  # Geospatial libraries
-  # Coordinates and CRSs
+  # Geospatial core (all from conda-forge, never pip)
+  - gdal                # provides `from osgeo import gdal`
+  - rasterio
   - pyproj>=3.0
   - geopy
   - cartopy
-  # Vector data
   - geopandas
   - geojson
   - pyogrio
+
   # Raster data
   - xarray
   - h5py
@@ -29,46 +32,51 @@ dependencies:
   - rioxarray>=0.3.0
   - xarray-spatial
   - regionmask
-  
+
+  # earthpy dependencies, installed by conda so pip doesn't fetch GDAL-bundling wheels
+  - scikit-image
+  - requests
+
   # Interactive computing
   - ipython
   - jupyterlab
   - notebook
   - tqdm
-  - nbresuse
+  - jupyter-resource-usage   # renamed from nbresuse
   - papermill
-  - nbclean
-  
+  - nbclean                  
+
   # ML and modeling
   - scikit-learn
   - scikit-fuzzy
 
   # Data access
-  - earthpy
   - earthaccess
   - pystac-client
   - adlfs
   - dataretrieval
   - osmnx
-  
-  # Plotting
-  # Matplotlib
+
+  # Plotting: matplotlib
   - matplotlib
   - nc-time-axis
-  - descartes
   - contextily
   - seaborn
-  # Holoviews
-  # --- Avoid compatibility issues with bokeh and new holoviews
-  - holoviews<=1.19
+
+  # Plotting: HoloViz -- solved together, no upper pin
+  - holoviews>=1.20
   - hvplot
   - geoviews>=1.10
-  - selenium
-  - phantomjs
+  - panel
+  - bokeh
   - jupyter_bokeh
+  - selenium
+  - firefox                  # replaces phantomjs for Bokeh PNG export
+  - geckodriver
+
   # Folium
   - folium
-  
+
   # QA
   - flake8
   - flake8-import-order
@@ -78,4 +86,5 @@ dependencies:
   - nbqa
 
   - pip:
-    - pygbif
+      - pygbif
+      - git+https://github.com/earthlab/earthpy.git@v0.10.1
